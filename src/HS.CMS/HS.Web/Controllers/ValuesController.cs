@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HS.Data;
+using HS.Data.Providers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HS.Web.Controllers
@@ -10,10 +12,18 @@ namespace HS.Web.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+
+        public IContextFactory _contextFactory { get; set; }
+
+        public ValuesController(IContextFactory contextFactory)
+        {
+            this._contextFactory = contextFactory;
+        }
         // GET api/values
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
+            
             return new string[] { "value1", "value2" };
         }
 
@@ -21,7 +31,12 @@ namespace HS.Web.Controllers
         [HttpGet("{id}")]
         public ActionResult<string> Get(int id)
         {
-            return "value";
+            //using (var ctx = _contextFactory.Create())
+            //{
+            //    ctx.Menus.Add(new Data.Entities.Menu() { ParentId = 0, Sort = id });
+            //    return Content(ctx.SaveChanges().ToString());
+            //}
+            return Content(id.ToString());
         }
 
         // POST api/values
