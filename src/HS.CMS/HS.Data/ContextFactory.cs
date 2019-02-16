@@ -17,10 +17,11 @@ namespace HS.Data
         private ConnectionStrings ConnectionStrings { get; }
         private readonly IResolver _resolver;
 
-        public ContextFactory(IOptions<Configuration.Data> dataOptions, IOptions<ConnectionStrings> connectionStringsOption)
+        public ContextFactory(IOptions<Configuration.Data> dataOptions, IOptions<ConnectionStrings> connectionStringsOption, IResolver resolver)
         {
             DataConfiguration = dataOptions.Value;
             ConnectionStrings = connectionStringsOption.Value;
+            _resolver = resolver;
         }
 
         public HSDbContext Create()

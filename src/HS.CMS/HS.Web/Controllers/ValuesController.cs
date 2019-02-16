@@ -31,12 +31,12 @@ namespace HS.Web.Controllers
         [HttpGet("{id}")]
         public ActionResult<string> Get(int id)
         {
-            //using (var ctx = _contextFactory.Create())
-            //{
-            //    ctx.Menus.Add(new Data.Entities.Menu() { ParentId = 0, Sort = id });
-            //    return Content(ctx.SaveChanges().ToString());
-            //}
-            return Content(id.ToString());
+            using (var ctx = _contextFactory.Create())
+            {
+                ctx.Menus.Add(new Data.Entities.Menu() { ParentId = 0, Sort = id });
+                return Content(ctx.SaveChanges().ToString());
+            }
+            //return Content(id.ToString());
         }
 
         // POST api/values
