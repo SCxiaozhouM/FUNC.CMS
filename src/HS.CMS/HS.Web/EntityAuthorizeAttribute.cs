@@ -1,4 +1,6 @@
-﻿using HS.Infrastructure;
+﻿using HS.Data.Extensions;
+using HS.Infrastructure;
+using HS.Web.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -53,7 +55,7 @@ namespace HS.Web
 
             if (IsGlobal && hasAtt) return;
 
-            
+
 
             // 如果已经处理过，就不处理了
             if (filterContext.Result != null) return;
@@ -90,12 +92,12 @@ namespace HS.Web
                 var retUrl = filterContext.HttpContext.Request.GetEncodedPathAndQuery();
                 //.Host.ToString();//.Url?.PathAndQuery;
 
-                var rurl = "~/Admin/User/Login";//.AppendReturn(retUrl);
+                var rurl = "~/Admin/User/Login?".AppendReturn(retUrl);
                 filterContext.Result = new RedirectResult(rurl);
             }
             else
             {
-               // filterContext.Result = filterContext.NoPermission(Permission);
+                filterContext.Result = filterContext.NoPermission(Permission);
             }
         }
     }

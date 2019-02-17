@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using HS.Data;
 using HS.Data.Providers;
+using HS.IService.Menus;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HS.Web.Controllers
@@ -21,6 +22,7 @@ namespace HS.Web.Controllers
         }
         // GET api/values
         [HttpGet]
+        [EntityAuthorize(Infrastructure.PermissionFlags.Detail)]
         public ActionResult<IEnumerable<string>> Get()
         {
             
@@ -33,7 +35,7 @@ namespace HS.Web.Controllers
         {
             using (var ctx = _contextFactory.Create())
             {
-                ctx.Menus.Add(new Data.Entities.Menu() { ParentId = 0, Sort = id });
+                ctx.Menus.Add(new Menu() { ParentId = 0, Sort = id });
                 return Content(ctx.SaveChanges().ToString());
             }
             //return Content(id.ToString());

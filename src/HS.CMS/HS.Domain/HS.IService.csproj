@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Menus\**" />
+    <EmbeddedResource Remove="Menus\**" />
+    <None Remove="Menus\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Menus\IMenuRepository.cs" />
+    <Compile Include="Menus\Menu.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HS.Infrastructure\HS.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Menus\Dto\" />
+  </ItemGroup>
+
+</Project>

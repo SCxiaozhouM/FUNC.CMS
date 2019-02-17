@@ -22,6 +22,9 @@ using Autofac;
 using Autofac.Core;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc.Internal;
+using System.Reflection;
+using HS.Infrastructure.Command;
+using HS.Data.Command.Menu;
 
 namespace HS.Web
 {
@@ -30,9 +33,11 @@ namespace HS.Web
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
         }
 
         public IConfiguration Configuration { get; }
+        public ICommandInvokerFactory _commandInvokerFactory { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.。。
         public IServiceProvider ConfigureServices(IServiceCollection services)
@@ -66,8 +71,9 @@ namespace HS.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ICommandInvokerFactory commandInvokerFactory)
         {
+            _commandInvokerFactory = commandInvokerFactory;
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -83,7 +89,6 @@ namespace HS.Web
 
             app.UseMvc(routes =>
             {
-               
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
@@ -100,6 +105,54 @@ namespace HS.Web
                 );
             });
             #endregion
+
+
+
+            //assembly 下的 控制器
+            //获取区域下的控制器
+            var controllers = Assembly.GetExecutingAssembly().GetTypes().Where(o => o.CustomAttributes.Where(f => f.AttributeType == typeof(AreaAttribute)).Any()).ToArray();
+            var types = FindAllArea(controllers);
         }
+
+
+        List<string> FindAllArea(Type[] controllers)
+        {
+           
+            var list = new List<Type>();
+            var typeDic = new Dictionary<string,Type[]>();
+            var areaDic = new List<String>();
+            //var assembly = Assembly.GetExecutingAssembly().GetTypes();
+            //var controllers = assembly.Where(o => o.BaseType.FullName.Contains(typeof(Controller).FullName));
+            /* var controllers = typeof(Controller).GetAllSubclasses(false).ToArray();*/
+            foreach (var item in controllers)
+            {
+                //获取去域名
+                var areaName = item.GetCustomAttributesData()
+                    ?.FirstOrDefault(f => f.AttributeType == typeof(AreaAttribute))
+                    ?.ConstructorArguments
+                    ?.FirstOrDefault()
+                    .Value
+                    ?.ToString();
+                if (string.IsNullOrEmpty(areaName)) continue;
+                // var asm = item.Assembly.GetExportedTypes();
+
+                //if (!list.Contains(item))
+                //{
+
+                //    if (!areaDic.Contains(areaName))
+                //    {
+                //        areaDic.Add(areaName);
+                //    }
+                //}
+                //AddMenuCommand command = new AddMenuCommand()
+                //{
+                //     Name=
+                //}
+                //_commandInvokerFactory.Handle<AddMenuCommand, CommandResult>(command);
+            }
+            return areaDic.ToList();
+        }
+
+
     }
 }

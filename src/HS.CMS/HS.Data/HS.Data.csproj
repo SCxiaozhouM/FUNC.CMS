@@ -5,6 +5,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Service\Menus\**" />
+    <EmbeddedResource Remove="Service\Menus\**" />
+    <None Remove="Service\Menus\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="BaseEntity.cs" />
+    <Compile Remove="Entities\Menu.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.1.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.4" />
     <PackageReference Include="MySql.Data.EntityFrameworkCore" Version="6.10.8" />
@@ -12,7 +23,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HS.Domain\HS.IService.csproj" />
     <ProjectReference Include="..\HS.Infrastructure\HS.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.AspNetCore.Mvc.Core">
+      <HintPath>C:\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.aspnetcore.mvc.core\2.1.1\lib\netstandard2.0\Microsoft.AspNetCore.Mvc.Core.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

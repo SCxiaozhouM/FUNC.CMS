@@ -1,9 +1,8 @@
-﻿using HS.IService;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace HS.Data.Entities
+namespace HS.IService.Menus
 {
     public class Menu : BaseEntity<int>
     {

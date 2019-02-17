@@ -1,11 +1,13 @@
-﻿using HS.IService;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace HS.Data.Entities
+namespace HS.IService.Command.Dto
 {
-    public class Menu : BaseEntity<int>
+    /// <summary>
+    /// 添加菜单命令
+    /// </summary>
+    public class AddMenuCommand
     {
         /// <summary>
         /// 名称
