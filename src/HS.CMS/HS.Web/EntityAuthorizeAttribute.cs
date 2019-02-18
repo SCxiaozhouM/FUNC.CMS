@@ -78,7 +78,7 @@ namespace HS.Web
             if (user == null) return false;
 
             // 判断权限
-            return false;
+            return true;
         }
 
         /// <summary>未认证请求</summary>

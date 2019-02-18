@@ -5,8 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Command\**" />
     <Compile Remove="Service\Menus\**" />
+    <EmbeddedResource Remove="Command\**" />
     <EmbeddedResource Remove="Service\Menus\**" />
+    <None Remove="Command\**" />
     <None Remove="Service\Menus\**" />
   </ItemGroup>
 

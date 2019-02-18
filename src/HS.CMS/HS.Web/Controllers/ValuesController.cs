@@ -15,10 +15,12 @@ namespace HS.Web.Controllers
     {
 
         public IContextFactory _contextFactory { get; set; }
+        public IMenuRepository _menuRepository { get; set; }
 
-        public ValuesController(IContextFactory contextFactory)
+        public ValuesController(IContextFactory contextFactory, IMenuRepository menuRepository)
         {
             this._contextFactory = contextFactory;
+            this._menuRepository = menuRepository;
         }
         // GET api/values
         [HttpGet]

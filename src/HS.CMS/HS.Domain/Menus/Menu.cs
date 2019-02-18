@@ -11,6 +11,10 @@ namespace HS.IService.Menus
         /// </summary>
         public string Name { get; set; }
         /// <summary>
+        /// 名
+        /// </summary>
+        public string DisplayName { get; set; }
+        /// <summary>
         /// 父级id
         /// </summary>
         public int ParentId { get; set; }

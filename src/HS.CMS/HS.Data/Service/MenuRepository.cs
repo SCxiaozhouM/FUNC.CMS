@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace HS.Data.Domain
+namespace HS.Data.Service
 {
     public class MenuRepository : IMenuRepository
     {

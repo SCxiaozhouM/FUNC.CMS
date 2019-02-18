@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Autofac;
 using HS.Data;
+using HS.IService;
 
 namespace HS.Web
 {
@@ -13,7 +14,9 @@ namespace HS.Web
         protected override void Load(ContainerBuilder builder)
         {
             var dataAssembly = typeof(IDataProvider).GetTypeInfo().Assembly;
+
             builder.RegisterAssemblyTypes(dataAssembly).AsImplementedInterfaces();
+
         }
     }
 }
