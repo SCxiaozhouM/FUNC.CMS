@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Exceptionless;
 using HS.Data;
 using HS.Data.Providers;
 using HS.IService.Menus;
@@ -27,7 +28,13 @@ namespace HS.Web.Controllers
         [EntityAuthorize(Infrastructure.PermissionFlags.Detail)]
         public ActionResult<IEnumerable<string>> Get()
         {
-            
+            try
+            {
+                throw new ApplicationException();
+            }catch(Exception ex)
+            {
+                ex.ToExceptionless().SetReferenceId(Guid.NewGuid().ToString("N")).Submit();
+            }
             return new string[] { "value1", "value2" };
         }
 

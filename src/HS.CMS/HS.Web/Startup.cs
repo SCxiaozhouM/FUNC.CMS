@@ -28,6 +28,7 @@ using HS.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using NewLife.Reflection;
 using System.ComponentModel;
+using Exceptionless;
 
 namespace HS.Web
 {
@@ -84,6 +85,11 @@ namespace HS.Web
             }
 
             app.UseHttpsRedirection();
+            
+            ExceptionlessClient.Default.Configuration.ApiKey = Configuration.GetSection("Exceptionless:ApiKey").Value;
+            ExceptionlessClient.Default.Configuration.ServerUrl = Configuration.GetSection("Exceptionless:ServerUrl").Value;
+            ExceptionlessClient.Default.SubmittingEvent += OnSubmittingEvent;
+            app.UseExceptionless();
 
             #region 路由注册
 
@@ -114,6 +120,18 @@ namespace HS.Web
             FindAllArea(controllers, _contextFactory);
         }
 
+
+        private void OnSubmittingEvent(object sender, EventSubmittingEventArgs e)
+        {
+            //已处理异常不处理
+            if (!e.IsUnhandledError) return;
+
+            if(e.Event.IsNotFound())
+            {
+                e.Cancel = true;
+                return;
+                            }
+        }
 
         List<string> FindAllArea(Type[] controllers, IContextFactory _contextFactory)
         {

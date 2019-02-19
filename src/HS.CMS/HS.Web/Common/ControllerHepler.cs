@@ -1,4 +1,5 @@
-﻿using HS.Infrastructure;
+﻿using Exceptionless;
+using HS.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -45,5 +46,8 @@ namespace HS.Web.Common
 
             return vr;
         }
+
+      
+
     }
 }
