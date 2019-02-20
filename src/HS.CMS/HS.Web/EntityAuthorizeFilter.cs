@@ -1,5 +1,6 @@
 ﻿using HS.Data.Extensions;
 using HS.Infrastructure;
+using HS.Infrastructure.Log;
 using HS.Web.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -13,26 +14,14 @@ using System.Text;
 
 namespace HS.Web
 {
-    public class EntityAuthorizeAttribute : Attribute, IAuthorizationFilter
+    public class EntityAuthorizeFilter : IAuthorizationFilter
     {
-        #region 属性
-        /// <summary>授权项</summary>
-        public PermissionFlags Permission { get; }
-
-        /// <summary>是否全局特性</summary>
-        internal Boolean IsGlobal;
-        #endregion
-        /// <summary>实例化实体授权特性</summary>
-        public EntityAuthorizeAttribute() { }
-
-        /// <summary>实例化实体授权特性</summary>
-        /// <param name="permission"></param>
-        public EntityAuthorizeAttribute(PermissionFlags permission)
+        public EntityAuthorizeFilter(ILoggerHelper loggerHelper)
         {
-            if (permission <= PermissionFlags.None) throw new ArgumentNullException(nameof(permission));
-
-            Permission = permission;
+            _loggerHelper = loggerHelper;
         }
+        private  PermissionFlags Permission;
+        public ILoggerHelper _loggerHelper { get; set; }
         public void OnAuthorization(AuthorizationFilterContext filterContext)
         {
             /*
@@ -43,6 +32,8 @@ namespace HS.Web
             var act = filterContext.ActionDescriptor;
             var ctrl = (ControllerActionDescriptor)act;
 
+            
+
             // 允许匿名访问时，直接跳过检查
             if (
                 ctrl.MethodInfo.IsDefined(typeof(AllowAnonymousAttribute)) ||
@@ -52,11 +43,19 @@ namespace HS.Web
             var hasAtt =
                 ctrl.MethodInfo.IsDefined(typeof(EntityAuthorizeAttribute), true) ||
                 ctrl.ControllerTypeInfo.IsDefined(typeof(EntityAuthorizeAttribute));
-
-            if (IsGlobal && hasAtt) return;
-
-
-
+            if(!hasAtt)
+            {
+                return;
+            }
+            Permission = ctrl.MethodInfo.GetCustomAttribute<EntityAuthorizeAttribute>().Permission;
+            var per = Permission.ToInt();
+            //记录执行过的增删改权限
+            if ((per & 2 | per & 4 | per & 8) > 0)
+            {
+                //TODO:获取操作人信息
+                var user = "xxx";
+                _loggerHelper.Trace("Authorization", string.Format("{0}执行了{1}操作", user, Permission), "Authorization","记录操作");
+            }
             // 如果已经处理过，就不处理了
             if (filterContext.Result != null) return;
 
@@ -73,11 +72,11 @@ namespace HS.Web
         {
 
 
-            // 判断当前登录用户
+            // TODO:判断当前登录用户
             var user = "";
             if (user == null) return false;
 
-            // 判断权限
+            // TODO:判断权限
             return true;
         }
 

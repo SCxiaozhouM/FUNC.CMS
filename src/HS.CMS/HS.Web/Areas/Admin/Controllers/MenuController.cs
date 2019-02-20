@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using HS.Infrastructure;
 using HS.Web.Areas.Admin.Data;
 using Microsoft.AspNetCore.Mvc;
 

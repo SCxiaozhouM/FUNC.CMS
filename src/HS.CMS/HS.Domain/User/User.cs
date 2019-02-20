@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace HS.Data.Entities
+namespace HS.IService.User
 {
     public class User:BaseEntity<int>
     {

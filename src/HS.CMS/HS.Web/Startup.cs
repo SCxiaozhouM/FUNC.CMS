@@ -1,4 +1,5 @@
-﻿using System;
+﻿#region 引用
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -29,6 +30,10 @@ using Microsoft.AspNetCore.Authorization;
 using NewLife.Reflection;
 using System.ComponentModel;
 using Exceptionless;
+using HS.Infrastructure.Log;
+using HS.Infrastructure.Command;
+using HS.Web.Features;
+#endregion
 
 namespace HS.Web
 {
@@ -47,7 +52,11 @@ namespace HS.Web
         {
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IResolver, Resolver>();
-
+            services.AddTransient<ILoggerHelper, ExceptionlessLogger>();
+            services.AddTransient<ICommandInvokerFactory>(serviceProvider =>
+            {
+                return new CommandInvokerFactory(serviceProvider);
+            });
             //data配置
             services.Configure<HS.Data.Configuration.Data>(C =>
             {
@@ -60,8 +69,17 @@ namespace HS.Web
 
             //注册ef
             services.AddEntityFramework(Configuration);
+            //session
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(15);
+                options.Cookie.HttpOnly = true;
+            });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc(option=> {
+                option.Filters.Add<GlobalExceptionFilter>();
+                option.Filters.Add<EntityAuthorizeFilter>();
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             var builder = new ContainerBuilder();
 
@@ -93,12 +111,7 @@ namespace HS.Web
 
             #region 路由注册
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
+            app.UseMvc();
             // 配置MVC选项
             app.UseRouter(routes =>
             {
@@ -107,12 +120,20 @@ namespace HS.Web
                 // 区域路由注册
                 routes.MapRoute(
                     name: "CubeAreas",
-                    template: "{area=Admin}/{controller=User}/{action=Index}/{id?}"
+                    template: "{area=exists}/{controller=User}/{action=Index}/{id?}"
                 );
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=User}/{action=Index}/{id?}");
             });
             #endregion
 
+            #region Session
+           
 
+            app.UseSession();
+
+            #endregion
 
             //assembly 下的 控制器
             //获取区域下的控制器
@@ -126,11 +147,30 @@ namespace HS.Web
             //已处理异常不处理
             if (!e.IsUnhandledError) return;
 
-            if(e.Event.IsNotFound())
+            //404不做处理
+            if (e.Event.IsNotFound())
             {
                 e.Cancel = true;
                 return;
-                            }
+            }
+            var error = e.Event.GetError();
+            if (error == null) return;
+            //401或者请求验证的错误忽略掉
+            if (error.Code == "401" || error.Type == "System.Web.HttpRequestValidationException")
+            {
+                //取消事件
+                e.Cancel = true;
+                return;
+            }
+            //忽略任何并非由我们的代码抛出的异常
+            var handledNamespaces = new List<string>{"Exceptionless"};
+            if (!error.StackTrace.Select(s=>s.DeclaringNamespace).Distinct().Any(o=>handledNamespaces.Any(o.Contains)))
+            {
+                e.Cancel = true;
+                return;
+            }
+            e.Event.Tags.Add("MunicipalPublicCenter.BusinessApi");
+            e.Event.MarkAsCritical();
         }
 
         List<string> FindAllArea(Type[] controllers, IContextFactory _contextFactory)
@@ -139,10 +179,6 @@ namespace HS.Web
             var list = new List<Type>();
             var typeDic = new Dictionary<string, Type[]>();
             var areaDic = new List<String>();
-
-            //var assembly = Assembly.GetExecutingAssembly().GetTypes();
-            //var controllers = assembly.Where(o => o.BaseType.FullName.Contains(typeof(Controller).FullName));
-            /* var controllers = typeof(Controller).GetAllSubclasses(false).ToArray();*/
             for (int i = 0; i < controllers.Length; i++)
             {
                 var item = controllers[i];

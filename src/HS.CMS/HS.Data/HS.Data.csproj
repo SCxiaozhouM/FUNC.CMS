@@ -5,23 +5,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Command\**" />
     <Compile Remove="Service\Menus\**" />
-    <EmbeddedResource Remove="Command\**" />
     <EmbeddedResource Remove="Service\Menus\**" />
-    <None Remove="Command\**" />
     <None Remove="Service\Menus\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="BaseEntity.cs" />
     <Compile Remove="Entities\Menu.cs" />
+    <Compile Remove="Entities\User.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.1.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.4" />
     <PackageReference Include="MySql.Data.EntityFrameworkCore" Version="6.10.8" />
+    <PackageReference Include="NewLife.Core" Version="8.0.6965.42074" />
     <PackageReference Include="Weapsy.Cqrs" Version="4.1.1" />
   </ItemGroup>
 

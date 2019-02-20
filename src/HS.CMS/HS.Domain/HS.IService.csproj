@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <Folder Include="Menus\Dto\" />
+    <Folder Include="User\Dto\" />
   </ItemGroup>
 
 </Project>

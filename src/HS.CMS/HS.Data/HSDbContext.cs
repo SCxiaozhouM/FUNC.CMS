@@ -1,5 +1,6 @@
 ﻿using HS.Data.Entities;
 using HS.IService.Menus;
+using HS.IService.User;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

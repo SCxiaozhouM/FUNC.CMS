@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Autofac;
 using HS.Data;
+using HS.Infrastructure.Log;
 using HS.IService;
 
 namespace HS.Web
@@ -16,7 +17,6 @@ namespace HS.Web
             var dataAssembly = typeof(IDataProvider).GetTypeInfo().Assembly;
 
             builder.RegisterAssemblyTypes(dataAssembly).AsImplementedInterfaces();
-
         }
     }
 }

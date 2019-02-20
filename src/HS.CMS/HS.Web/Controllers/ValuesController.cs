@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Exceptionless;
 using HS.Data;
 using HS.Data.Providers;
+using HS.Infrastructure;
 using HS.IService.Menus;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,18 +29,13 @@ namespace HS.Web.Controllers
         [EntityAuthorize(Infrastructure.PermissionFlags.Detail)]
         public ActionResult<IEnumerable<string>> Get()
         {
-            try
-            {
-                throw new ApplicationException();
-            }catch(Exception ex)
-            {
-                ex.ToExceptionless().SetReferenceId(Guid.NewGuid().ToString("N")).Submit();
-            }
+           
             return new string[] { "value1", "value2" };
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
+        [EntityAuthorize(Infrastructure.PermissionFlags.Delete)]
         public ActionResult<string> Get(int id)
         {
             using (var ctx = _contextFactory.Create())
