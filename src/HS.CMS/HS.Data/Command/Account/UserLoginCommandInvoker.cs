@@ -32,7 +32,7 @@ namespace HS.Data.Command.Account
 
                 //command.Password = $"{command.Password}{_appConfig.Value.PwdSalt}".GetMd5Hash();
                 var userModel = this._context.Create().Users
-                                    .Where(u => u.Name==command.Account).FirstOrDefault();
+                                    .Where(u => u.Account == command.Account).FirstOrDefault();
                 if (userModel != null && (userModel.Password == (command.Password + userModel.Salt).MD5()))
                 {
                     return new UserLoginCommandResult() { UserInfo = userModel };

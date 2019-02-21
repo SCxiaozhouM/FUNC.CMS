@@ -53,10 +53,7 @@ namespace HS.Web
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IResolver, Resolver>();
             services.AddTransient<ILoggerHelper, ExceptionlessLogger>();
-            services.AddTransient<ICommandInvokerFactory>(serviceProvider =>
-            {
-                return new CommandInvokerFactory(serviceProvider);
-            });
+          
             //data配置
             services.Configure<HS.Data.Configuration.Data>(C =>
             {
@@ -224,8 +221,7 @@ namespace HS.Web
                         //读取权限
                         string remark, displayName;
                         object value;
-                        object obj = item.CreateInstance();
-                        var sort = item.GetValue("MenuOrder").ToInt();
+                       /* var sort = item.GetPropertyEx("MenuOrder").GetValue("MenuOrder");*///.ToInt();
                         var per = ScanActionMenu(item, out remark, out displayName);
                         //子菜单
                         var menuModle = ctx.Menus.Where(o => o.Name == menuName).FirstOrDefault();
@@ -238,7 +234,7 @@ namespace HS.Web
                                 ParentId = areaModel.Id,
                                 DisplayName = displayName,
                                 Remark = remark,
-                                Sort = sort,
+                                Sort = i+1,
                                 Permission = per,
                                 Url = "/" + areaName + "/" + menuName
                             };
@@ -249,7 +245,7 @@ namespace HS.Web
                             //存在则读取权限
                             menuModle.Permission = per;
                             menuModle.Remark = remark;
-                            menuModle.Sort = sort;
+                            menuModle.Sort = i + 1;
                             menuModle.DisplayName = displayName;
                             ctx.Menus.Update(menuModle);
                         }

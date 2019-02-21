@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using HS.Infrastructure;
+using HS.Infrastructure.Command;
 using HS.Web.Areas.Admin.Data;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,11 +15,14 @@ namespace HS.Web.Areas.Admin.Controllers
     [Description("系统操作菜单以及功能目录树。支持排序，不可见菜单仅用于功能权限限制。每个菜单的权限子项由系统自动生成，请不要人为修改")]
     public class MenuController : BaseControllers
     {
-        
-        static MenuController()
+        private ICommandInvokerFactory _commandInvokerFactory { get; set; }
+        public  int MenuOrder { get; set; } = 2;
+
+        public MenuController(ICommandInvokerFactory commandInvokerFactory)
         {
-            MenuOrder = 11;
+            this._commandInvokerFactory = commandInvokerFactory;
         }
+        
         [EntityAuthorize(Infrastructure.PermissionFlags.Detail)]
         public IActionResult Index()
         {

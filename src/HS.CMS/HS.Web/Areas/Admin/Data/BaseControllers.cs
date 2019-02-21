@@ -12,6 +12,6 @@ namespace HS.Web.Areas.Admin.Data
         {
         }
         /// <summary>菜单顺序。扫描是会反射读取</summary>
-        protected static Int32 MenuOrder { get; set; } = 10;
+        //protected virtual  Int32 MenuOrder { get; set; }
     }
 }
